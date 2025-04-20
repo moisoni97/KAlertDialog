@@ -2,9 +2,7 @@ package com.developer.kalert;
 
 import android.content.Context;
 import android.os.Build;
-import com.developer.progressx.ProgressWheel;
 
-@SuppressWarnings("unused")
 public class ProgressHelper {
 
     private ProgressWheel progressWheel;
@@ -15,46 +13,57 @@ public class ProgressHelper {
     ProgressHelper(Context ctx) {
         spin = true;
         spinSpeed = 0.75f;
+
         barWidth = ctx.getResources().getDimensionPixelSize(R.dimen.common_circle_width) + 1;
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            barColor = ctx.getResources().getColor(R.color.success_stroke_color,ctx.getTheme());
-        }else {
+            barColor = ctx.getResources().getColor(R.color.success_stroke_color, ctx.getTheme());
+        } else {
             barColor = ctx.getResources().getColor(R.color.success_stroke_color);
         }
+
         rimWidth = 0;
         rimColor = 0x00000000;
+
         progress = false;
         progressValue = -1;
+
         circleRadius = ctx.getResources().getDimensionPixelOffset(R.dimen.progress_circle_radius);
     }
 
     void setProgressWheel(ProgressWheel progressWheel) {
         this.progressWheel = progressWheel;
-        updatePropsIfNeed();
+        updatePropsIfNeeded();
     }
 
-    private void updatePropsIfNeed () {
+    private void updatePropsIfNeeded() {
         if (progressWheel != null) {
             if (!spin && progressWheel.isSpinning()) {
                 progressWheel.stopSpinning();
             } else if (spin && !progressWheel.isSpinning()) {
                 progressWheel.spin();
             }
+
             if (spinSpeed != progressWheel.getSpinSpeed()) {
                 progressWheel.setSpinSpeed(spinSpeed);
             }
+
             if (barWidth != progressWheel.getBarWidth()) {
                 progressWheel.setBarWidth(barWidth);
             }
+
             if (barColor != progressWheel.getBarColor()) {
                 progressWheel.setBarColor(barColor);
             }
+
             if (rimWidth != progressWheel.getRimWidth()) {
                 progressWheel.setRimWidth(rimWidth);
             }
+
             if (rimColor != progressWheel.getRimColor()) {
                 progressWheel.setRimColor(rimColor);
             }
+
             if (progressValue != progressWheel.getProgress()) {
                 if (progress) {
                     progressWheel.setInstantProgress(progressValue);
@@ -62,13 +71,14 @@ public class ProgressHelper {
                     progressWheel.setProgress(progressValue);
                 }
             }
+
             if (circleRadius != progressWheel.getCircleRadius()) {
                 progressWheel.setCircleRadius(circleRadius);
             }
         }
     }
 
-    public ProgressWheel getProgressWheel () {
+    public ProgressWheel getProgressWheel() {
         return progressWheel;
     }
 
@@ -84,12 +94,12 @@ public class ProgressHelper {
 
     public void spin() {
         spin = true;
-        updatePropsIfNeed();
+        updatePropsIfNeeded();
     }
 
     public void stopSpinning() {
         spin = false;
-        updatePropsIfNeed();
+        updatePropsIfNeeded();
     }
 
     public float getProgress() {
@@ -99,13 +109,13 @@ public class ProgressHelper {
     public void setProgress(float progress) {
         this.progress = false;
         progressValue = progress;
-        updatePropsIfNeed();
+        updatePropsIfNeeded();
     }
 
     public void setInstantProgress(float progress) {
         progressValue = progress;
         this.progress = true;
-        updatePropsIfNeed();
+        updatePropsIfNeeded();
     }
 
     public int getCircleRadius() {
@@ -114,7 +124,7 @@ public class ProgressHelper {
 
     public void setCircleRadius(int circleRadius) {
         this.circleRadius = circleRadius;
-        updatePropsIfNeed();
+        updatePropsIfNeeded();
     }
 
     public int getBarWidth() {
@@ -123,7 +133,7 @@ public class ProgressHelper {
 
     public void setBarWidth(int barWidth) {
         this.barWidth = barWidth;
-        updatePropsIfNeed();
+        updatePropsIfNeeded();
     }
 
     public int getBarColor() {
@@ -132,7 +142,7 @@ public class ProgressHelper {
 
     public void setBarColor(int barColor) {
         this.barColor = barColor;
-        updatePropsIfNeed();
+        updatePropsIfNeeded();
     }
 
     public int getRimWidth() {
@@ -141,7 +151,7 @@ public class ProgressHelper {
 
     public void setRimWidth(int rimWidth) {
         this.rimWidth = rimWidth;
-        updatePropsIfNeed();
+        updatePropsIfNeeded();
     }
 
     public int getRimColor() {
@@ -150,7 +160,7 @@ public class ProgressHelper {
 
     public void setRimColor(int rimColor) {
         this.rimColor = rimColor;
-        updatePropsIfNeed();
+        updatePropsIfNeeded();
     }
 
     public float getSpinSpeed() {
@@ -159,6 +169,6 @@ public class ProgressHelper {
 
     public void setSpinSpeed(float spinSpeed) {
         this.spinSpeed = spinSpeed;
-        updatePropsIfNeed();
+        updatePropsIfNeeded();
     }
 }

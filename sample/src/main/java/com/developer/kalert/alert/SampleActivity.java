@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
@@ -18,7 +19,6 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sample_activity);
 
@@ -41,9 +41,9 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.basic_test) {
-            KAlertDialog sd = new KAlertDialog(this, KAlertDialog.NORMAL_TYPE, true);
+            KAlertDialog sd = new KAlertDialog(this, KAlertDialog.NORMAL_TYPE, false);
             sd.setTitleText("Lorem Ipsum");
-            sd.setContentText("It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout.");
+            sd.setContentText("Auto night mode is set to off.");
             sd.setConfirmClickListener("OK", null);
             sd.setCancelable(true);
             sd.setCanceledOnTouchOutside(true);
@@ -71,7 +71,7 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
             new KAlertDialog(this, KAlertDialog.NORMAL_TYPE, true)
                     .setTitleText("Lorem Ipsum")
                     .setContentText("Lorem Ipsum is simply dummy text of the printing and typesetting industry.")
-                    //.setContentFont(R.font.sf)
+                    .setContentFont(R.font.sf)
                     .setConfirmClickListener("OK", null)
                     .show();
         }
@@ -105,7 +105,7 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
             new KAlertDialog(this, KAlertDialog.WARNING_TYPE, true)
                     .setTitleText("Are you sure?")
                     .setContentText("Won't be able to recover this file!")
-                    .setConfirmClickListener("Yes,delete it!", sDialog -> sDialog.setTitleText("Deleted!")
+                    .setConfirmClickListener("Yes, delete it!", sDialog -> sDialog.setTitleText("Deleted!")
                             .setContentText("Your imaginary file has been deleted!")
                             .setConfirmClickListener("OK", null)
                             .changeAlertType(KAlertDialog.SUCCESS_TYPE))
@@ -117,14 +117,14 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
                     .setTitleText("Are you sure?")
                     .setContentText("Won't be able to recover this file!")
                     .showCancelButton(true)
-                    //.setConfirmButtonFont(R.font.sf)
+                    .setConfirmButtonFont(R.font.sf)
                     .setCancelButtonFontAssets("fonts/sf.ttf")
-                    .setCancelClickListener("No,cancel plx!", sDialog -> sDialog.setTitleText("Cancelled!")
+                    .setCancelClickListener("No, cancel please!", sDialog -> sDialog.setTitleText("Cancelled!")
                             .setContentText("Your imaginary file is safe :)")
                             .showCancelButton(false)
                             .setConfirmClickListener("OK", null)
                             .changeAlertType(KAlertDialog.ERROR_TYPE))
-                    .setConfirmClickListener("Yes,delete it!", sDialog -> sDialog.setTitleText("Deleted!")
+                    .setConfirmClickListener("Yes, delete it!", sDialog -> sDialog.setTitleText("Deleted!")
                             .showCancelButton(false)
                             .setContentText("Your imaginary file has been deleted!")
                             .setConfirmClickListener("OK", null)
@@ -164,18 +164,11 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
         }
 
         if (v.getId() == R.id.edit_text_dialog) {
-            KAlertDialog dialog = new KAlertDialog(this, KAlertDialog.INPUT_TYPE, true);
-            dialog.setInputFieldHint("Write message");
-            dialog.setInputFieldText("Hello World!");
-            dialog.setTitleText("A Very Big Edit Text Title With Line Break On Small Devices");
-            dialog.setConfirmClickListener("OK", kAlertDialog -> {
-                kAlertDialog.dismissWithAnimation();
-                kAlertDialog.getInputText(); //you get the input text by calling this
-                Toast.makeText(this, kAlertDialog.getInputText(), Toast.LENGTH_SHORT).show();
-            });
-            dialog.show();
-            dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                    | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM); //this will allow to show keyboard
+            KAlertDialog dialog = getKAlertDialog();
+            if (dialog.getWindow() != null) {
+                dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                        | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM); //this will allow to show keyboard
+            }
         }
 
         if (v.getId() == R.id.progress_dialog) {
@@ -223,5 +216,20 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
                 }
             }.start();
         }
+    }
+
+    @NonNull
+    private KAlertDialog getKAlertDialog() {
+        KAlertDialog dialog = new KAlertDialog(this, KAlertDialog.INPUT_TYPE, true);
+        dialog.setInputFieldHint("Write message");
+        dialog.setInputFieldText("Hello World!");
+        dialog.setTitleText("A Very Big Edit Text Title With Line Break On Small Devices");
+        dialog.setConfirmClickListener("OK", kAlertDialog -> {
+            kAlertDialog.dismissWithAnimation();
+            kAlertDialog.getInputText(); //you get the input text by calling this
+            Toast.makeText(this, kAlertDialog.getInputText(), Toast.LENGTH_SHORT).show();
+        });
+        dialog.show();
+        return dialog;
     }
 }

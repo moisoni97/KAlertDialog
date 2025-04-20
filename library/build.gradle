@@ -1,40 +1,21 @@
-apply plugin: 'com.android.library'
-apply plugin: 'maven-publish'
-
-ext {
-    PUBLISH_GROUP_ID = 'io.github.tutorialsandroid'
-    PUBLISH_VERSION = '20.5.8'
-    PUBLISH_ARTIFACT_ID = 'kalertdialog'
-    PUBLISH_DESCRIPTION = 'AlertDialog for Android, a beautiful and material alert dialog to use in your android app.'
-    PUBLISH_URL = 'https://github.com/tutorialsandroid/KAlertDialog'
-    PUBLISH_LICENSE_NAME = 'Apache License'
-    PUBLISH_LICENSE_URL =
-            'https://github.com/TutorialsAndroid/KAlertDialog/blob/master/LICENSE'
-    PUBLISH_DEVELOPER_ID = 'tutorialsandroid'
-    PUBLISH_DEVELOPER_NAME = 'Akshay Masram'
-    PUBLISH_DEVELOPER_EMAIL = 'akshaysunilmasram@yahoo.com'
-    PUBLISH_SCM_CONNECTION =
-            'scm:git:github.com/tutorialsandroid/kalertdialog.git'
-    PUBLISH_SCM_DEVELOPER_CONNECTION =
-            'scm:git:ssh://github.com/tutorialsandroid/kalertdialog.git'
-    PUBLISH_SCM_URL =
-            'https://github.com/tutorialsandroid/kalertdialog/tree/master'
+plugins {
+    id 'com.android.library'
+    id 'maven-publish'
 }
-apply from: "${rootProject.projectDir}/scripts/publish-module.gradle"
 
 android {
     namespace 'com.developer.kalert'
-
-    compileSdk 34
+    compileSdkVersion 36
 
     defaultConfig {
-        minSdkVersion 19
-        targetSdkVersion 34
+        minSdkVersion 21
+        targetSdkVersion 36
     }
+
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 
@@ -43,20 +24,40 @@ android {
         targetCompatibility JavaVersion.VERSION_11
     }
 
-    lint {
-        abortOnError false
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+
+        multipleVariants {
+            withSourcesJar()
+            withJavadocJar()
+            allVariants()
+        }
+    }
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                groupId = 'com.github.moisoni97'
+                artifactId = 'KAlertDialog'
+                version = '1.0.0'
+            }
+        }
     }
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.9.0'
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'com.google.android.material:material:1.12.0'
 
-    //PROGRESS VIEW
-    implementation 'com.github.TutorialsAndroid:progressx:v6.0.19'
-
-    //GLIDE IMAGE LOADING LIBRARY
     implementation 'com.github.bumptech.glide:glide:4.16.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
+
+    implementation 'com.google.guava:guava:33.3.1-android'
 }

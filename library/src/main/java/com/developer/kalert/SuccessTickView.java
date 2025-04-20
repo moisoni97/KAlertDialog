@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 
+import androidx.annotation.NonNull;
+
 public class SuccessTickView extends View {
 
     private float mDensity = -1;
@@ -21,7 +23,7 @@ public class SuccessTickView extends View {
     private final float MIN_LEFT_RECT_W = dip2px(3.3f);
     private final float MAX_RIGHT_RECT_W = CONST_RIGHT_RECT_W + dip2px(6.7f);
 
-    private float maxLeftRectWidth,leftRectWidth,rightRectWidth;
+    private float maxLeftRectWidth, leftRectWidth, rightRectWidth;
     private boolean mLeftRectGrowMode;
 
     public SuccessTickView(Context context) {
@@ -29,13 +31,13 @@ public class SuccessTickView extends View {
         init();
     }
 
-    public SuccessTickView(Context context, AttributeSet attrs){
-        super(context,attrs);
+    public SuccessTickView(Context context, AttributeSet attrs) {
+        super(context, attrs);
         init();
     }
 
     @SuppressLint("ResourceAsColor")
-    private void init () {
+    private void init() {
         mPaint = new Paint();
         mPaint.setColor(R.color.success_stroke_color);
         leftRectWidth = CONST_LEFT_RECT_W;
@@ -44,14 +46,17 @@ public class SuccessTickView extends View {
     }
 
     @Override
-    public void draw(Canvas canvas) {
+    public void draw(@NonNull Canvas canvas) {
         super.draw(canvas);
+
         int totalW = getWidth();
         int totalH = getHeight();
+
         canvas.rotate(45, totalW >> 1, totalH >> 1);
 
-        totalW /= 1.2;
-        totalH /= 1.4;
+        totalW = (int) (totalW / 1.2);
+        totalH /= (int) (totalH / 1.4);
+
         maxLeftRectWidth = (totalW + CONST_LEFT_RECT_W) / 2 + CONST_RECT_WEIGHT - 1;
 
         RectF leftRect = new RectF();
@@ -76,16 +81,18 @@ public class SuccessTickView extends View {
     }
 
     private float dip2px(float dpValue) {
-        if(mDensity == -1) {
+        if (mDensity == -1) {
             mDensity = getResources().getDisplayMetrics().density;
         }
         return dpValue * mDensity + 0.5f;
     }
 
-    public void startTickAnim () {
+    public void startTickAnim() {
         leftRectWidth = 0;
         rightRectWidth = 0;
+
         invalidate();
+
         Animation tickAnim = new Animation() {
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
@@ -96,21 +103,25 @@ public class SuccessTickView extends View {
                     if (0.65 < interpolatedTime) {
                         rightRectWidth = MAX_RIGHT_RECT_W * ((interpolatedTime - 0.65f) / 0.19f);
                     }
+
                     invalidate();
                 } else if (0.7 < interpolatedTime && 0.84 >= interpolatedTime) {
                     mLeftRectGrowMode = false;
                     leftRectWidth = maxLeftRectWidth * (1 - ((interpolatedTime - 0.7f) / 0.14f));
                     leftRectWidth = Math.max(leftRectWidth, MIN_LEFT_RECT_W);
                     rightRectWidth = MAX_RIGHT_RECT_W * ((interpolatedTime - 0.65f) / 0.19f);
+
                     invalidate();
                 } else if (0.84 < interpolatedTime && 1 >= interpolatedTime) {
                     mLeftRectGrowMode = false;
                     leftRectWidth = MIN_LEFT_RECT_W + (CONST_LEFT_RECT_W - MIN_LEFT_RECT_W) * ((interpolatedTime - 0.84f) / 0.16f);
                     rightRectWidth = CONST_RIGHT_RECT_W + (MAX_RIGHT_RECT_W - CONST_RIGHT_RECT_W) * (1 - ((interpolatedTime - 0.84f) / 0.16f));
+
                     invalidate();
                 }
             }
         };
+
         tickAnim.setDuration(750);
         tickAnim.setStartOffset(100);
         startAnimation(tickAnim);

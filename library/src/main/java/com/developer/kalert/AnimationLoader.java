@@ -7,8 +7,10 @@ import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Xml;
 import android.view.animation.*;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
+
 import java.io.IOException;
 
 class AnimationLoader {
@@ -38,18 +40,18 @@ class AnimationLoader {
 
         Animation anim = null;
 
-        // Make sure we are on a start tag.
+        //make sure we are on a start tag.
         int type;
         int depth = parser.getDepth();
 
-        while (((type=parser.next()) != XmlPullParser.END_TAG || parser.getDepth() > depth)
+        while (((type = parser.next()) != XmlPullParser.END_TAG || parser.getDepth() > depth)
                 && type != XmlPullParser.END_DOCUMENT) {
 
             if (type != XmlPullParser.START_TAG) {
                 continue;
             }
 
-            String  name = parser.getName();
+            String name = parser.getName();
 
             switch (name) {
                 case "set":
@@ -83,6 +85,5 @@ class AnimationLoader {
         }
 
         return anim;
-
     }
 }

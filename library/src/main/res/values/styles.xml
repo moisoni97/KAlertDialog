@@ -11,17 +11,16 @@
         <item name="android:backgroundDimEnabled">true</item>
         <item name="android:backgroundDimAmount">0.4</item>
 
-        <item name="alertDialogDark">@drawable/dialoglight</item>
+        <item name="alertDialogMode">@drawable/dialoglight</item>
         <item name="alertDialogTextColor">@android:color/black</item>
         <item name="alertDialogContentTextColor">@android:color/black</item>
         <item name="alertDialogProgressColor">@android:color/black</item>
         <item name="alertDialogInputFieldHintColor">@android:color/black</item>
     </style>
 
-
     <style name="alert_dialog_dark" parent="alert_dialog_light">
         <item name="android:backgroundDimAmount">0.8</item>
-        <item name="alertDialogDark">@drawable/dialogdark</item>
+        <item name="alertDialogMode">@drawable/dialogdark</item>
         <item name="alertDialogTextColor">@android:color/white</item>
         <item name="alertDialogContentTextColor">@android:color/white</item>
         <item name="alertDialogProgressColor">@android:color/white</item>

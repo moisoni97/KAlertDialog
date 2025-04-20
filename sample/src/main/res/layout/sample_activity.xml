@@ -8,129 +8,130 @@
         android:layout_height="wrap_content">
 
         <Button
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
             android:id="@+id/progress_dialog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_margin="10dp"
-            android:text="@string/show_material_progress"/>
+            android:text="@string/show_material_progress" />
 
         <Button
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
             android:id="@+id/basic_test"
-            android:layout_centerHorizontal="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_below="@id/progress_dialog"
+            android:layout_centerHorizontal="true"
             android:layout_margin="10dp"
-            android:text="@string/a_basic_message"/>
+            android:text="@string/a_basic_message" />
 
         <Button
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
             android:id="@+id/under_text_test"
-            android:layout_centerHorizontal="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_below="@id/basic_test"
+            android:layout_centerHorizontal="true"
             android:layout_margin="10dp"
-            android:text="@string/a_title_with_a_text_under"/>
+            android:text="@string/a_title_with_a_text_under" />
 
         <Button
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
             android:id="@+id/title_with_font_changed"
-            android:layout_centerHorizontal="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_below="@id/under_text_test"
+            android:layout_centerHorizontal="true"
             android:layout_margin="10dp"
-            android:text="A Title with font changed"/>
+            android:text="@string/a_title_with_font_changed" />
 
         <Button
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
             android:id="@+id/content_text_with_font_changed"
-            android:layout_centerHorizontal="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_below="@id/title_with_font_changed"
+            android:layout_centerHorizontal="true"
             android:layout_margin="10dp"
-            android:text="A Content text with font changed"/>
+            android:text="@string/a_content_text_with_font_changed" />
 
         <Button
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
             android:id="@+id/title_gravity"
-            android:layout_centerHorizontal="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_below="@id/content_text_with_font_changed"
+            android:layout_centerHorizontal="true"
             android:layout_margin="10dp"
-            android:text="@string/title_gravity"/>
+            android:text="@string/title_gravity" />
 
         <Button
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
             android:id="@+id/error_text_test"
-            android:layout_centerHorizontal="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_below="@id/title_gravity"
+            android:layout_centerHorizontal="true"
             android:layout_margin="10dp"
-            android:text="@string/show_error_message"/>
+            android:text="@string/show_error_message" />
 
         <Button
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
             android:id="@+id/success_text_test"
-            android:layout_centerHorizontal="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_below="@id/error_text_test"
+            android:layout_centerHorizontal="true"
             android:layout_margin="10dp"
-            android:text="@string/a_success_message"/>
+            android:text="@string/a_success_message" />
 
         <Button
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
             android:id="@+id/warning_confirm_test"
-            android:layout_centerHorizontal="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_below="@id/success_text_test"
+            android:layout_centerHorizontal="true"
             android:layout_margin="10dp"
-            android:text="@string/a_warning_message_with_a_listener_bind_to_the_confirm_button"/>
+            android:text="@string/a_warning_message_with_a_listener_bind_to_the_confirm_button" />
 
         <Button
             android:id="@+id/warning_cancel_test"
-            android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:layout_centerHorizontal="true"
+            android:layout_height="wrap_content"
             android:layout_below="@id/warning_confirm_test"
+            android:layout_centerHorizontal="true"
             android:layout_margin="10dp"
-            android:text="@string/a_warning_message_with_listeners_bind_to_cancel_and_confirm_button"/>
+            android:text="@string/a_warning_message_with_listeners_bind_to_cancel_and_confirm_button" />
 
         <Button
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
             android:id="@+id/custom_img_test"
-            android:layout_centerHorizontal="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_below="@id/warning_cancel_test"
+            android:layout_centerHorizontal="true"
             android:layout_margin="10dp"
-            android:text="@string/a_message_with_a_custom_icon"/>
+            android:text="@string/a_message_with_a_custom_icon" />
 
         <Button
             android:id="@+id/custom_url_image_circle"
-            android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:layout_centerHorizontal="true"
+            android:layout_height="wrap_content"
             android:layout_below="@id/custom_img_test"
+            android:layout_centerHorizontal="true"
             android:layout_margin="10dp"
-            android:text="@string/a_message_with_a_custom_image"/>
+            android:text="@string/a_message_with_a_custom_image" />
 
         <Button
             android:id="@+id/custom_url_image_big"
-            android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:layout_centerHorizontal="true"
+            android:layout_height="wrap_content"
             android:layout_below="@id/custom_url_image_circle"
+            android:layout_centerHorizontal="true"
             android:layout_margin="10dp"
-            android:text="@string/a_message_with_a_custom_image_big"/>
+            android:text="@string/a_message_with_a_custom_image_big" />
 
         <Button
             android:id="@+id/edit_text_dialog"
-            android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:layout_centerHorizontal="true"
+            android:layout_height="wrap_content"
             android:layout_below="@id/custom_url_image_big"
+            android:layout_centerHorizontal="true"
             android:layout_margin="10dp"
-            android:text="@string/edit_text_dialog"/>
+            android:text="@string/edit_text_dialog" />
+
     </RelativeLayout>
 
 </ScrollView>

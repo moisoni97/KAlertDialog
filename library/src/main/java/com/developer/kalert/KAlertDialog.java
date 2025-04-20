@@ -1,7 +1,6 @@
 package com.developer.kalert;
 
 import static android.view.View.GONE;
-import static android.view.View.TEXT_ALIGNMENT_CENTER;
 
 import android.content.Context;
 import android.content.res.Configuration;
@@ -11,6 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
+import android.text.TextUtils;
 import android.text.util.Linkify;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -26,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatButton;
@@ -37,10 +38,8 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.developer.progressx.ProgressWheel;
 import com.google.android.material.textfield.TextInputEditText;
-
-import java.util.Objects;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 public class KAlertDialog extends AlertDialog implements View.OnClickListener {
 
@@ -57,8 +56,6 @@ public class KAlertDialog extends AlertDialog implements View.OnClickListener {
     private Drawable mColor, mCancelColor;
     private View mDialogView;
     private FrameLayout mCustomViewContainer;
-    //private ViewTreeObserver mCancelButtonObserver, mConfirmButtonObserver;
-    //private ViewTreeObserver.OnGlobalLayoutListener mConfirmButtonGlobalListener, mCancelButtonGlobalListener;
 
     private String mTitleText, mContentText, justifyContentText, justifyContentTextColor, justifyContentTextSize,
             justifyContentTextFont, justifyContentTextFontExtension, mCancelText, mConfirmText, mInputFieldHint, mInputFieldText;
@@ -71,9 +68,6 @@ public class KAlertDialog extends AlertDialog implements View.OnClickListener {
     private int drawableColor = 0;
     private Integer contentAlignment, contentGravity;
     private int titleTextLayoutGravity = Gravity.CENTER;
-    private int titleTextGravity = Gravity.CENTER;
-    private int titleTextAlignment = TEXT_ALIGNMENT_CENTER;
-    private Integer cancelButtonHeight, confirmButtonHeight;
 
     private boolean mShowCancel, mShowContent, mShowTitleText, mCloseFromCancel, mShowConfirm;
     private int contentTextSize = 0;
@@ -99,8 +93,6 @@ public class KAlertDialog extends AlertDialog implements View.OnClickListener {
     public static final int IMAGE_BIG = 8;
     public static final int IMAGE_CIRCLE = 9;
 
-    public static boolean DARK_STYLE = false;
-
     public static final int INPUT_TYPE = 7;
     private TextInputEditText mEditText;
 
@@ -120,13 +112,16 @@ public class KAlertDialog extends AlertDialog implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.alert_dialog);
 
-        mDialogView = Objects.requireNonNull(getWindow()).getDecorView().findViewById(android.R.id.content);
+        mDialogView = findViewById(android.R.id.content);
         mTitleTextView = findViewById(R.id.title_text);
         mContentTextView = findViewById(R.id.content_text);
         justifyContentTextView = findViewById(R.id.content_text2);
+
         mErrorFrame = findViewById(R.id.error_frame);
-        assert mErrorFrame != null;
-        mErrorX = mErrorFrame.findViewById(R.id.error_x);
+        if (mErrorFrame != null) {
+            mErrorX = mErrorFrame.findViewById(R.id.error_x);
+        }
+
         mEditText = findViewById(R.id.edit_text);
         mSuccessFrame = findViewById(R.id.success_frame);
         mProgressFrame = findViewById(R.id.progress_dialog);
@@ -158,7 +153,6 @@ public class KAlertDialog extends AlertDialog implements View.OnClickListener {
         setConfirmText(mConfirmText, confirmTextColor);
         setConfirmButtonColor(mColor);
         setCancelButtonColor(mCancelColor);
-        //setButtonMatchingHeight();
         changeAlertType(mAlertType, true);
         setInputFieldHint(mInputFieldHint);
         setInputFieldText(mInputFieldText);
@@ -166,46 +160,54 @@ public class KAlertDialog extends AlertDialog implements View.OnClickListener {
 
     public KAlertDialog(Context context, int alertType, boolean autoNightMode) {
         super(context, isNightMode(context, autoNightMode) ? R.style.alert_dialog_dark : R.style.alert_dialog_light);
-        //super(context, DARK_STYLE ? R.style.alert_dialog_dark : R.style.alert_dialog_light);
         this.context = context;
 
         setCancelable(true);
         setCanceledOnTouchOutside(false);
+
         mProgressHelper = new ProgressHelper(context);
         mAlertType = alertType;
         mImageAnim = AnimationLoader.loadAnimation(getContext(), R.anim.error_frame_in);
         mErrorXInAnim = (AnimationSet) AnimationLoader.loadAnimation(getContext(), R.anim.error_x_in);
+
         mModalInAnim = (AnimationSet) AnimationLoader.loadAnimation(getContext(), R.anim.modal_in);
         mModalOutAnim = (AnimationSet) AnimationLoader.loadAnimation(getContext(), R.anim.modal_out);
-        Objects.requireNonNull(mModalOutAnim).setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
-            }
 
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                mDialogView.setVisibility(GONE);
-                mDialogView.post(() -> {
-                    if (mCloseFromCancel) {
-                        KAlertDialog.super.cancel();
-                    } else {
-                        KAlertDialog.super.dismiss();
-                    }
-                });
-            }
+        if (mModalOutAnim != null) {
+            mModalOutAnim.setAnimationListener(new Animation.AnimationListener() {
+                @Override
+                public void onAnimationStart(Animation animation) {
+                }
 
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-        });
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    mDialogView.setVisibility(GONE);
+                    mDialogView.post(() -> {
+                        if (mCloseFromCancel) {
+                            KAlertDialog.super.cancel();
+                        } else {
+                            KAlertDialog.super.dismiss();
+                        }
+                    });
+                }
+
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
+            });
+        }
+
         mOverlayOutAnim = new Animation() {
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
-                WindowManager.LayoutParams wlp = Objects.requireNonNull(getWindow()).getAttributes();
-                wlp.alpha = 1 - interpolatedTime;
-                getWindow().setAttributes(wlp);
+                if (getWindow() != null) {
+                    WindowManager.LayoutParams wlp = getWindow().getAttributes();
+                    wlp.alpha = 1 - interpolatedTime;
+                    getWindow().setAttributes(wlp);
+                }
             }
         };
+
         mOverlayOutAnim.setDuration(120);
     }
 
@@ -258,12 +260,12 @@ public class KAlertDialog extends AlertDialog implements View.OnClickListener {
                     setConfirmButtonColor(mColor);
                     break;
                 case CUSTOM_IMAGE_TYPE:
-                    setCustomImage1(mCustomImgDrawable);
+                    setCustomDrawable(mCustomImgDrawable);
                     setCustomImageColorFilter(drawableColor);
                     setConfirmButtonColor(mColor);
                     break;
                 case URL_IMAGE_TYPE:
-                    setURLImage1(imageURL, displayType);
+                    setImageURL(imageURL, displayType);
                     setConfirmButtonColor(mColor);
                     break;
                 case PROGRESS_TYPE:
@@ -288,8 +290,8 @@ public class KAlertDialog extends AlertDialog implements View.OnClickListener {
         hideKeyboard();
     }
 
+    @CanIgnoreReturnValue
     public KAlertDialog setTitleText(String text) {
-
         mTitleText = text;
         if (mTitleTextView != null && mTitleText != null) {
             showTitleText(true);
@@ -307,9 +309,11 @@ public class KAlertDialog extends AlertDialog implements View.OnClickListener {
         } else {
             showTitleText(false);
         }
+
         return this;
     }
 
+    @CanIgnoreReturnValue
     public KAlertDialog setTitleTextLayoutGravity(int gravity) {
         titleTextLayoutGravity = gravity;
         if (mTitleTextView != null) {
@@ -322,8 +326,8 @@ public class KAlertDialog extends AlertDialog implements View.OnClickListener {
         return this;
     }
 
+    @CanIgnoreReturnValue
     public KAlertDialog setTitleTextGravity(int gravity) {
-        titleTextGravity = gravity;
         if (mTitleTextView != null) {
             mTitleTextView.setGravity(gravity);
         }
@@ -340,44 +344,43 @@ public class KAlertDialog extends AlertDialog implements View.OnClickListener {
     }
 
     public KAlertDialog setCustomImage(int resourceId) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            //ResourcesCompat.getDrawable( context.getResources(), resourceId, context.getTheme() );
-            return setCustomImage1(getContext().getResources().getDrawable(resourceId, context.getTheme()));
-        } else {
-            return setCustomImage1(getContext().getResources().getDrawable(resourceId));
-        }
+        return setCustomDrawable(ResourcesCompat.getDrawable(context.getResources(), resourceId, context.getTheme()));
     }
 
     public KAlertDialog setDrawableTintOnNightMode(boolean isTinted, int tintColor) {
         if (isTinted && isNightMode(context, true)) {
             setCustomImageColorFilter(tintColor);
         }
+
         return this;
     }
 
     public KAlertDialog setURLImage(String imageURL, int displayType) {
-        return setURLImage1(imageURL, displayType);
+        return setImageURL(imageURL, displayType);
     }
 
-    private KAlertDialog setCustomImage1(Drawable drawable) {
+    private KAlertDialog setCustomDrawable(Drawable drawable) {
         mCustomImgDrawable = drawable;
         if (mCustomImage != null && mCustomImgDrawable != null) {
             mCustomImage.setVisibility(View.VISIBLE);
             mCustomImage.setImageDrawable(mCustomImgDrawable);
         }
+
         return this;
     }
 
+    @CanIgnoreReturnValue
     private KAlertDialog setCustomImageColorFilter(int color) {
         drawableColor = color;
         if (mCustomImage != null && drawableColor != 0) {
             mCustomImage.setColorFilter(ContextCompat.getColor(context, drawableColor),
                     android.graphics.PorterDuff.Mode.SRC_IN);
         }
+
         return this;
     }
 
-    private KAlertDialog setURLImage1(String imageURL, int displayType) {
+    private KAlertDialog setImageURL(String imageURL, int displayType) {
         this.imageURL = imageURL;
         this.displayType = displayType;
         if (mCustomImage != null && mCustomBigImage != null && imageLoading != null) {
@@ -388,15 +391,15 @@ public class KAlertDialog extends AlertDialog implements View.OnClickListener {
                     mCustomBigImage.setVisibility(View.VISIBLE);
                     Glide.with(mCustomBigImage)
                             .load(imageURL)
-                            .listener(new RequestListener<Drawable>() {
+                            .listener(new RequestListener<>() {
                                 @Override
-                                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                public boolean onLoadFailed(@Nullable GlideException e, Object model, @NonNull Target<Drawable> target, boolean isFirstResource) {
                                     imageLoading.setVisibility(GONE);
                                     return false;
                                 }
 
                                 @Override
-                                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                public boolean onResourceReady(@NonNull Drawable resource, @NonNull Object model, Target<Drawable> target, @NonNull DataSource dataSource, boolean isFirstResource) {
                                     imageLoading.setVisibility(GONE);
                                     return false;
                                 }
@@ -407,15 +410,15 @@ public class KAlertDialog extends AlertDialog implements View.OnClickListener {
                     mCustomImage.setVisibility(View.VISIBLE);
                     Glide.with(mCustomImage)
                             .load(imageURL)
-                            .listener(new RequestListener<Drawable>() {
+                            .listener(new RequestListener<>() {
                                 @Override
-                                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                public boolean onLoadFailed(@Nullable GlideException e, Object model, @NonNull Target<Drawable> target, boolean isFirstResource) {
                                     imageLoading.setVisibility(GONE);
                                     return false;
                                 }
 
                                 @Override
-                                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                public boolean onResourceReady(@NonNull Drawable resource, @NonNull Object model, Target<Drawable> target, @NonNull DataSource dataSource, boolean isFirstResource) {
                                     imageLoading.setVisibility(GONE);
                                     return false;
                                 }
@@ -425,9 +428,11 @@ public class KAlertDialog extends AlertDialog implements View.OnClickListener {
                     break;
             }
         }
+
         return this;
     }
 
+    @CanIgnoreReturnValue
     public KAlertDialog setContentText(String text) {
         mContentText = text;
         if (mContentTextView != null && mContentText != null) {
@@ -453,6 +458,7 @@ public class KAlertDialog extends AlertDialog implements View.OnClickListener {
         } else {
             showContentText(false);
         }
+
         return this;
     }
 
@@ -467,6 +473,7 @@ public class KAlertDialog extends AlertDialog implements View.OnClickListener {
      * @param fontName      custom font name: "my_custom_font_name"
      * @param fontExtension font extension: ".ttf" or ".otf"
      */
+    @CanIgnoreReturnValue
     public KAlertDialog justifyContentText(String content, String textColor, String fontSize, String fontName, String fontExtension) {
         justifyContentText = content;
         justifyContentTextColor = textColor;
@@ -478,95 +485,62 @@ public class KAlertDialog extends AlertDialog implements View.OnClickListener {
             justifyContentTextView.setBackgroundColor(Color.TRANSPARENT);
             showJustifyText(true);
 
-            String text;
-            text = "<html><style type='text/css'>@font-face{";
-            text += "font-family: ";
-            text += fontName;
-            text += ";";
-            text += "src: url('fonts/";
-            text += fontName;
-            text += fontExtension;
-            text += "');} </style>";
-            text += "<body ><p ";
-            text += "style=\"color:";
-            text += textColor;
-            text += ";";
-            text += "font-size:";
-            text += justifyContentTextSize;
-            text += ";";
-            text += "font-family:";
-            text += fontName;
-            text += "\"";
-            text += "align=\"justify\">";
-            text += justifyContentText;
-            text += "</p></body></html>";
+            String textStyle = getTextStyle(textColor, fontName, fontExtension);
 
-            justifyContentTextView.loadDataWithBaseURL("file:///android_asset/", text, "text/html", "utf-8", null);
+            justifyContentTextView.loadDataWithBaseURL("file:///android_asset/", textStyle, "text/html", "utf-8", null);
         } else {
             showJustifyText(false);
         }
+
         return this;
     }
 
+    @NonNull
+    private String getTextStyle(String textColor, String fontName, String fontExtension) {
+        String text;
+        text = "<html><style type='text/css'>@font-face{";
+        text += "font-family: ";
+        text += fontName;
+        text += ";";
+        text += "src: url('fonts/";
+        text += fontName;
+        text += fontExtension;
+        text += "');} </style>";
+        text += "<body ><p ";
+        text += "style=\"color:";
+        text += textColor;
+        text += ";";
+        text += "font-size:";
+        text += justifyContentTextSize;
+        text += ";";
+        text += "font-family:";
+        text += fontName;
+        text += "\"";
+        text += "align=\"justify\">";
+        text += justifyContentText;
+        text += "</p></body></html>";
+        return text;
+    }
+
+    @CanIgnoreReturnValue
     public KAlertDialog showCancelButton(boolean isShow) {
         mShowCancel = isShow;
         if (mCancelButton != null) {
             mCancelButton.setVisibility(mShowCancel ? View.VISIBLE : GONE);
         }
+
         return this;
     }
 
+    @CanIgnoreReturnValue
     public KAlertDialog showConfirmButton(boolean isShow) {
         mShowConfirm = isShow;
         if (mConfirmButton != null) {
             mConfirmButton.setVisibility(mShowConfirm ? View.VISIBLE : GONE);
         }
+
         return this;
     }
-
-    /*
-    Method to set the matching height of both confirm and cancel button. It helps
-    when device font sized is increased or the text of any one button has greater length
-    the specific button heights also get increased and this leads to un-usual height of both
-    buttons. So this method set's the height of both button remain same.
-
-    private void setButtonMatchingHeight() {
-        if (mConfirmButton != null && mCancelButton != null) {
-            mConfirmButtonObserver = mConfirmButton.getViewTreeObserver();
-            mCancelButtonObserver = mCancelButton.getViewTreeObserver();
-
-            if (mConfirmButton.getVisibility() == View.VISIBLE) {
-                mConfirmButtonGlobalListener = () -> {
-                    confirmButtonHeight = mConfirmButton.getHeight();
-                    setMatchingHeight();
-                };
-                mConfirmButtonObserver.addOnGlobalLayoutListener(mConfirmButtonGlobalListener);
-            }
-
-            if (mCancelButton.getVisibility() == View.VISIBLE) {
-                mCancelButtonGlobalListener = () -> {
-                    cancelButtonHeight = mCancelButton.getHeight();
-                    setMatchingHeight();
-                };
-                mCancelButtonObserver.addOnGlobalLayoutListener(mCancelButtonGlobalListener);
-            }
-        }
-    }
-
-    private void setMatchingHeight() {
-        if ( confirmButtonHeight != null && cancelButtonHeight != null ) {
-            //check which button value is greater
-            if (confirmButtonHeight.equals(cancelButtonHeight)) { }
-            else if ( confirmButtonHeight > cancelButtonHeight ) {
-                mCancelButton.setLayoutParams(new LinearLayout.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT, confirmButtonHeight));
-            } else {
-                mConfirmButton.setLayoutParams(new LinearLayout.LayoutParams(
-                        ViewGroup.LayoutParams.WRAP_CONTENT, cancelButtonHeight));
-            }
-        }
-    }
-    */
 
     private void setDialogTextFont(TextView contentText, Integer font, String path) {
         if (context != null) {
@@ -644,41 +618,35 @@ public class KAlertDialog extends AlertDialog implements View.OnClickListener {
         }
     }
 
-    @Deprecated
     public KAlertDialog setCancelClickListener(KAlertClickListener listener) {
         mCancelClickListener = listener;
         return this;
     }
 
     public KAlertDialog setCancelClickListener(String text, KAlertClickListener listener) {
-        //noinspection deprecation
         setCancelText(text);
         mCancelClickListener = listener;
         return this;
     }
 
     public KAlertDialog setCancelClickListener(String text, int color, KAlertClickListener listener) {
-        //noinspection deprecation
         setCancelText(text, color);
         mCancelClickListener = listener;
         return this;
     }
 
-    @Deprecated
     public KAlertDialog setConfirmClickListener(KAlertClickListener listener) {
         mConfirmClickListener = listener;
         return this;
     }
 
     public KAlertDialog setConfirmClickListener(String text, KAlertClickListener listener) {
-        //noinspection deprecation
         setConfirmText(text);
         mConfirmClickListener = listener;
         return this;
     }
 
     public KAlertDialog setConfirmClickListener(String text, int color, KAlertClickListener listener) {
-        //noinspection deprecation
         setConfirmText(text, color);
         mConfirmClickListener = listener;
         return this;
@@ -700,6 +668,7 @@ public class KAlertDialog extends AlertDialog implements View.OnClickListener {
         if (mConfirmButton != null && mColor != null) {
             mConfirmButton.setBackground(mColor);
         }
+
         return this;
     }
 
@@ -708,6 +677,7 @@ public class KAlertDialog extends AlertDialog implements View.OnClickListener {
         if (mCancelButton != null && mCancelColor != null) {
             mCancelButton.setBackground(mCancelColor);
         }
+
         return this;
     }
 
@@ -757,7 +727,7 @@ public class KAlertDialog extends AlertDialog implements View.OnClickListener {
         return mCancelText;
     }
 
-    @Deprecated
+    @CanIgnoreReturnValue
     public KAlertDialog setCancelText(String text) {
         mCancelText = text;
         if (mCancelButton != null && mCancelText != null) {
@@ -765,10 +735,11 @@ public class KAlertDialog extends AlertDialog implements View.OnClickListener {
             mCancelButton.setText(mCancelText);
             mCancelButton.setTextColor(ContextCompat.getColor(context, cancelTextColor));
         }
+
         return this;
     }
 
-    @Deprecated
+    @CanIgnoreReturnValue
     public KAlertDialog setCancelText(String text, int color) {
         mCancelText = text;
         cancelTextColor = color;
@@ -777,6 +748,7 @@ public class KAlertDialog extends AlertDialog implements View.OnClickListener {
             mCancelButton.setText(mCancelText);
             mCancelButton.setTextColor(ContextCompat.getColor(context, cancelTextColor));
         }
+
         return this;
     }
 
@@ -784,7 +756,7 @@ public class KAlertDialog extends AlertDialog implements View.OnClickListener {
         return mConfirmText;
     }
 
-    @Deprecated
+    @CanIgnoreReturnValue
     public KAlertDialog setConfirmText(String text) {
         mConfirmText = text;
         if (mConfirmButton != null && mConfirmText != null) {
@@ -792,10 +764,11 @@ public class KAlertDialog extends AlertDialog implements View.OnClickListener {
             mConfirmButton.setText(mConfirmText);
             mConfirmButton.setTextColor(ContextCompat.getColor(context, confirmTextColor));
         }
+
         return this;
     }
 
-    @Deprecated
+    @CanIgnoreReturnValue
     public KAlertDialog setConfirmText(String text, int color) {
         mConfirmText = text;
         confirmTextColor = color;
@@ -804,24 +777,17 @@ public class KAlertDialog extends AlertDialog implements View.OnClickListener {
             mConfirmButton.setText(mConfirmText);
             mConfirmButton.setTextColor(ContextCompat.getColor(context, confirmTextColor));
         }
+
         return this;
     }
 
 
     public KAlertDialog confirmButtonColor(int color) {
-        //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
         return setConfirmButtonColor(ContextCompat.getDrawable(context, color));
-        //}else {
-        //return setConfirmButtonColor(ContextCompat.getDrawable(context, color));
-        //}
     }
 
     public KAlertDialog cancelButtonColor(int color) {
-        //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
         return setCancelButtonColor(ContextCompat.getDrawable(context, color));
-        //}else {
-        //return setCancelButtonColor(getContext().getResources().getDrawable(color));
-        //}
     }
 
     public KAlertDialog setTitleColor(int color) {
@@ -892,29 +858,32 @@ public class KAlertDialog extends AlertDialog implements View.OnClickListener {
         }
     }
 
+    @CanIgnoreReturnValue
     public KAlertDialog setInputFieldHint(String text) {
         mInputFieldHint = text;
         if (mEditText != null && mInputFieldHint != null) {
             mEditText.setHint(mInputFieldHint);
         }
+
         return this;
     }
 
+    @CanIgnoreReturnValue
     public KAlertDialog setInputFieldText(String text) {
         mInputFieldText = text;
         if (mEditText != null && mInputFieldText != null) {
             mEditText.setText(mInputFieldText);
         }
+
         return this;
     }
 
     public String getInputText() {
-        return mEditText.getText().toString();
+        return TextUtils.isEmpty(mEditText.getText()) ? "" : mEditText.getText().toString();
     }
 
     private void showKeyboard() {
-        final InputMethodManager imm = (InputMethodManager)
-                context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        final InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
 
         if (!mEditText.hasFocus()) {
             mEditText.requestFocus();
@@ -925,8 +894,7 @@ public class KAlertDialog extends AlertDialog implements View.OnClickListener {
 
     private void hideKeyboard() {
         if (mEditText != null) {
-            InputMethodManager imm = (InputMethodManager) context.getSystemService
-                    (Context.INPUT_METHOD_SERVICE);
+            InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
         }
     }
