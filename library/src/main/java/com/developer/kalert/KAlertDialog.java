@@ -133,7 +133,7 @@ public class KAlertDialog extends AlertDialog implements View.OnClickListener {
         mProgressHelper.setProgressWheel(findViewById(R.id.progressWheel));
         imageLoading = findViewById(R.id.image_loading);
 
-        mConfirmButton = findViewById(R.id.custom_confirm_button);
+        mConfirmButton = findViewById(R.id.confirm_button);
         mCancelButton = findViewById(R.id.cancel_button);
         mConfirmButton.setOnClickListener(this);
         mCancelButton.setOnClickListener(this);
@@ -841,7 +841,7 @@ public class KAlertDialog extends AlertDialog implements View.OnClickListener {
             } else {
                 dismissWithAnimation();
             }
-        } else if (v.getId() == R.id.custom_confirm_button) {
+        } else if (v.getId() == R.id.confirm_button) {
             if (mConfirmClickListener != null) {
                 mConfirmClickListener.onClick(KAlertDialog.this);
             } else {

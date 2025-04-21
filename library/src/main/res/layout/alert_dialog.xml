@@ -135,7 +135,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:textColor="?attr/alertDialogTextColor"
-        android:textSize="18sp"
+        android:textSize="19sp"
         android:visibility="gone"
         tools:text="@string/dialog_default_title" />
 
@@ -145,7 +145,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:textColor="?attr/alertDialogContentTextColor"
-        android:textSize="16sp"
+        android:textSize="15sp"
         android:visibility="gone" />
 
     <WebView
@@ -185,14 +185,14 @@
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/cancel_button"
-            style="@style/dialog_blue_button"
+            style="@style/alert_dialog_button"
             android:layout_weight="0.5"
             android:visibility="gone"
             tools:text="@string/dialog_cancel" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/custom_confirm_button"
-            style="@style/dialog_blue_button"
+            android:id="@+id/confirm_button"
+            style="@style/alert_dialog_button"
             android:layout_weight="0.5"
             android:visibility="gone"
             tools:text="@string/dialog_ok" />
