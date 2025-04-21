@@ -781,6 +781,15 @@ public class KAlertDialog extends AlertDialog implements View.OnClickListener {
         return this;
     }
 
+    public KAlertDialog confirmButtonTextColor(int color) {
+        this.confirmTextColor = color;
+        return this;
+    }
+
+    public KAlertDialog cancelButtonTextColor(int color) {
+        this.cancelTextColor = color;
+        return this;
+    }
 
     public KAlertDialog confirmButtonColor(int color) {
         return setConfirmButtonColor(ContextCompat.getDrawable(context, color));
